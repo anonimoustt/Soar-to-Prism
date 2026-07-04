@@ -1,0 +1,12 @@
+{
+  "model_type": "pta",
+  "time_scale": 1,
+  "time_units": "ticks",
+  "operators": {
+    "lower": { "resets_clock": false },
+    "raise": { "resets_clock": false }
+  },
+  "pta_semantics": {
+    "use_init_phase": false
+  }
+}

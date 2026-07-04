@@ -1,0 +1,3 @@
+echo "\nLoading settings.soar"
+
+waitsnc --on

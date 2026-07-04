@@ -1,0 +1,26 @@
+{
+  "model_type": "pta",
+  "time_scale": 1,
+  "time_units": "ticks",
+  "clocks": {
+    "tm": {
+      "min_duration": 0,
+      "max_duration": 17
+    }
+  },
+  "operators": {
+    "approach": { "resets_clock": false },
+    "lower": { "resets_clock": false },
+    "exit": { "resets_clock": false },
+    "raise": { "resets_clock": true }
+  },
+  "states": {
+    "0": { "variable": "ctrl-state", "clock": "tm", "time_bound": 2 },
+    "1": { "variable": "ctrl-state", "clock": "tm", "time_bound": 6 },
+    "2": { "variable": "ctrl-state", "clock": "tm", "time_bound": 14 },
+    "3": { "variable": "ctrl-state", "clock": "tm", "time_bound": 17 }
+  },
+  "pta_semantics": {
+    "use_init_phase": false
+  }
+}

@@ -1,0 +1,24 @@
+// Properties for train_gate.pm, mirroring the UPPAAL queries verified in
+// examples/train-gate/Uppaal/Uppaal_version_of_Train_Gate.xml (see the
+// "Verified Queries" table in examples/train-gate/SOURCE_README.md).
+//
+// PRISM's PTA engine only supports Pmin=?/Pmax=? queries directly (not
+// P>=1[...]); since every transition here is deterministic given the
+// current state and clock value (no genuine nondeterministic choice), Pmin
+// and Pmax agree, and a result of 1 means "always holds" / 0 means "not
+// always holds" -- read them the same way as the UPPAAL A[] queries.
+
+// A[] not deadlock -- there is always some way for time or a transition to
+// move forward. Expect 1 (verified with "prism ... -ptamethod digital": no
+// timelock error is raised and this evaluates to 1).
+Pmax=? [ G true ]
+
+// A[] (Train.In imply Gate.Down) -- the gate must be down whenever the train
+// is actually in the crossing. Expect 1 (true, satisfied).
+Pmax=? [ G (position=2 => gate_position=1) ]
+
+// A[] (Train.Near imply Gate.Down) -- the gate is NOT required to already be
+// down the moment the train is merely near; by design the gate closes only
+// after the controller processes the approach, not instantly. Expect < 1
+// (not satisfied -- matches the UPPAAL result).
+Pmax=? [ G (position=1 => gate_position=1) ]

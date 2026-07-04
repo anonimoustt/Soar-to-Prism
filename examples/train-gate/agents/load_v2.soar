@@ -1,0 +1,6 @@
+echo "\nLoading load_v2.soar"
+
+source "settings.soar"
+source "controller/controller_v2.soar"
+source "gate/gate_v2.soar"
+source "train/train_v2.soar"

@@ -1,0 +1,6 @@
+echo "\nLoading load.soar"
+
+source "settings.soar"
+source "controller/controller.soar"
+source "gate/gate.soar"
+source "train/train.soar"

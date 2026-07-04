@@ -1,0 +1,44 @@
+# Gate Agent v2
+# State machine: up <--> down
+# Monitors ctrl-state from input-link — no clock guards, no signal strings
+# ctrl-state=2 means controller issued lower; ctrl-state=0 (after cycle) means raise
+
+sp {gate*init
+    (state <s> ^type state)
+-->
+    (<s> ^gate-position up)
+}
+
+# ── Proposals (monitor ctrl-state) ────────────────────────────────────────────
+
+sp {gate*propose*lower
+    (state <s> ^gate-position up
+               ^io.input-link.ctrl-state 2)
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name lower)
+}
+
+sp {gate*propose*raise
+    (state <s> ^gate-position down
+               ^io.input-link.ctrl-state 0)
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name raise)
+}
+
+# ── Apply rules ───────────────────────────────────────────────────────────────
+
+sp {gate*apply*lower
+    (state <s> ^operator <o> ^gate-position up)
+    (<o> ^name lower)
+-->
+    (<s> ^gate-position up - down)
+}
+
+sp {gate*apply*raise
+    (state <s> ^operator <o> ^gate-position down)
+    (<o> ^name raise)
+-->
+    (<s> ^gate-position down - up)
+}

@@ -1,0 +1,60 @@
+# Train Agent v2
+# State machine: far --> near --> in --> far
+# Python injects: ^clock (every tick), resets to 0 on new cycle
+# Timing based on absolute clock values — no approach-time needed
+# Clock resets at T=7 (full cycle complete)
+
+sp {train*init
+    (state <s> ^type state)
+-->
+    (<s> ^position far)
+}
+
+# ── Proposals ─────────────────────────────────────────────────────────────────
+
+sp {train*propose*approach
+    (state <s> ^position far
+               ^io.input-link.clock { <c> > 1 <= 2 })
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name approach)
+}
+
+sp {train*propose*enter
+    (state <s> ^position near
+               ^io.input-link.clock { <c> > 6 <= 9  })
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name enter)
+}
+
+sp {train*propose*exit
+    (state <s> ^position in
+               ^io.input-link.clock { <c> > 9 <= 12 })
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name exit)
+}
+
+# ── Apply rules ───────────────────────────────────────────────────────────────
+
+sp {train*apply*approach
+    (state <s> ^operator <o> ^position far)
+    (<o> ^name approach)
+-->
+    (<s> ^position far - near)
+}
+
+sp {train*apply*enter
+    (state <s> ^operator <o> ^position near)
+    (<o> ^name enter)
+-->
+    (<s> ^position near - in)
+}
+
+sp {train*apply*exit
+    (state <s> ^operator <o> ^position in)
+    (<o> ^name exit)
+-->
+    (<s> ^position in - far)
+}

@@ -1,0 +1,74 @@
+# Controller Agent v2
+# State machine: 0 --> 1 --> 2 --> 3 --> 0
+# Python injects: ^clock (every tick), resets to 0 on new cycle
+# Timing based on absolute clock values — no approach-time needed
+
+sp {controller*init
+    (state <s> ^type state)
+-->
+    (<s> ^ctrl-state 0)
+}
+
+# ── Proposals ─────────────────────────────────────────────────────────────────
+
+sp {controller*propose*approach
+    (state <s> ^ctrl-state 0
+               ^io.input-link.clock { <c> > 1 <= 2 })
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name approach)
+}
+
+sp {controller*propose*lower
+    (state <s> ^ctrl-state 1
+               ^io.input-link.clock { <c> > 2 <= 6 })
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name lower)
+}
+
+sp {controller*propose*exit
+    (state <s> ^ctrl-state 2
+               ^io.input-link.clock { <c> > 12 <= 14 })
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name exit)
+}
+
+sp {controller*propose*raise
+    (state <s> ^ctrl-state 3
+               ^io.input-link.clock { <c> > 14 <= 17 })
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name raise)
+}
+
+# ── Apply rules ───────────────────────────────────────────────────────────────
+
+sp {controller*apply*approach
+    (state <s> ^operator <o> ^ctrl-state 0)
+    (<o> ^name approach)
+-->
+    (<s> ^ctrl-state 0 - 1)
+}
+
+sp {controller*apply*lower
+    (state <s> ^operator <o> ^ctrl-state 1)
+    (<o> ^name lower)
+-->
+    (<s> ^ctrl-state 1 - 2)
+}
+
+sp {controller*apply*exit
+    (state <s> ^operator <o> ^ctrl-state 2)
+    (<o> ^name exit)
+-->
+    (<s> ^ctrl-state 2 - 3)
+}
+
+sp {controller*apply*raise
+    (state <s> ^operator <o> ^ctrl-state 3)
+    (<o> ^name raise)
+-->
+    (<s> ^ctrl-state 3 - 0)
+}
