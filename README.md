@@ -140,6 +140,20 @@ When `model_type` is set to `pta` and the configuration includes clocks, operato
 }
 ```
 
+### Full worked example: a multi-agent Train-Gate crossing
+
+`examples/train-gate/` walks through translating a real, three-agent Soar
+model (train, controller, gate) into a verified PRISM PTA end to end —
+building the project, writing the PTA config, running the translator per
+agent, hand-composing the per-agent output into one multi-module PRISM
+file, and checking it with a real PRISM install (the results match a
+reference UPPAAL model of the same system). It's also a good tour of this
+translator's rough edges as of this writing: see
+`examples/train-gate/TRANSLATION_WALKTHROUGH.md` for the full walkthrough,
+including several real bugs found and fixed along the way (a parser crash,
+a truncated conjunctive-guard test, and rule names not being recognized
+when agent-prefixed).
+
 ## 🧪 Example
 
 ### Input (Soar):
@@ -210,6 +224,12 @@ endmodule
 - Does not yet support numeric preference comparisons or impasses.
 - Translation assumes one-to-one rule-to-transition mapping.
 - Currently supports only basic production rules and deterministic transitions.
+- The PTA translator processes one Soar file (agent) per run; a multi-agent
+  model needs one translator run per agent, followed by manually composing
+  the outputs into a single PRISM file (renaming colliding module/variable/
+  action names, and reconciling any externally-driven clock input against a
+  real PTA clock). See `examples/train-gate/TRANSLATION_WALKTHROUGH.md` for
+  a full worked example of this process.
 
 ---
 
